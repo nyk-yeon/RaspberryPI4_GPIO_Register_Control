@@ -1,3 +1,7 @@
+/* Raspberry 4B 레지스터 제어 테스트
+* 레지스터 맵/데이터시트 : https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711/rpi_DATA_2711_1p0.pdf#page=92&zoom=100,0,829
+* 원본 예제 : https://webnautes.tistory.com/728
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -6,7 +10,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#define GPIO_BASE 0xFE200000
+#define GPIO_BASE 0xFE200000       // PI 4 B
 #define GPFSEL2   0x08
 #define GPSET0    0x1C
 #define GPCLR0    0x28
@@ -42,8 +46,9 @@ int main(){
 
   volatile unsigned int* gpio = (volatile unsigned int*)gpio_memory_map;
 
-  /* Address Offset space : 4, Address size : 8bit  (total 1 Offset Adress : 32bit) ?
-  *  printf("gpio[x] size : %x \n", sizeof(gpio[GPSET0])); // 4byte * 8 = 32bit ?
+  /* 
+  * Address Offset space : 4, Address size : 8bit  (total 1 Offset Adress : 32bit) ?
+  * printf("gpio[x] size : %x \n", sizeof(gpio[GPSET0])); // 4byte * 8 = 32bit ?
   */
 
   /* GPFSEL2 Register
@@ -66,11 +71,11 @@ int main(){
     // GPSET0 /GPCLR0 Register : GPIO BCM num 0~31 Control Register
 
     //gpio[GPSET0 /4] = 0b 0000 0000  0010 0000  0000 0000  0000 0000; // 21
-    gpio[GPSET0 /4] |= (1<<21);      // GPIO SET (ON)
+    gpio[GPSET0 /4] |= (1<<21);      // GPIO SET (HIGH)
     sleep(1);
     
     //gpio[GPCLR0/4] = 0b 0000 0000  0010 0000  0000 0000  0000 0000; // 21
-    gpio[GPCLR0 /4] |= (1<<21);      // GPIO CLR (OFF)
+    gpio[GPCLR0 /4] |= (1<<21);      // GPIO CLR (LOW)
     sleep(1);
   }    
   
